@@ -1,0 +1,4 @@
+{
+  "title": "TinyFish Web Search & Fetch",
+  "description": "Routes the built-in web_search and web_fetch tools through the TinyFish Search and Fetch APIs."
+}

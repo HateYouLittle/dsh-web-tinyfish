@@ -1,0 +1,4 @@
+{
+  "title": "TinyFish 网络搜索与抓取",
+  "description": "将内置的 web_search 与 web_fetch 工具改为使用 TinyFish Search API 与 Fetch API。"
+}

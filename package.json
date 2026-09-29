@@ -1,0 +1,48 @@
+{
+  "name": "dsh-web-tinyfish",
+  "version": "1.0.0",
+  "description": "TinyFish search and fetch providers for DeepSeek Harness (dsh), backing the built-in web_search and web_fetch tools.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./fetch": "./fetch.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "fetch.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "tinyfish",
+    "web-search",
+    "web-fetch",
+    "search-provider",
+    "fetch-provider"
+  ],
+  "license": "MIT",
+  "author": "HateYouLittle <HateYouLittle@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HateYouLittle/dsh-web-tinyfish.git"
+  },
+  "homepage": "https://github.com/HateYouLittle/dsh-web-tinyfish#readme",
+  "bugs": {
+    "url": "https://github.com/HateYouLittle/dsh-web-tinyfish/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

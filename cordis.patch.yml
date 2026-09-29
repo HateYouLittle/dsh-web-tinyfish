@@ -1,0 +1,54 @@
+# Bundle patch for dsh-web-tinyfish.
+#
+# Three entries, applied after the shipped bundle layers:
+#   1. insert the TinyFish SEARCH provider row (ctx.web search registry);
+#   2. insert the TinyFish FETCH provider row (ctx.web fetch registry);
+#   3. override the `web` seam row so it pins both operations to TinyFish.
+# The `web` override replaces the row's whole `config`, so every shipped field
+# is restated (searchProvider + fetchProvider).
+#
+# Both rows register under the id "tinyfish" — the seam keeps separate search and
+# fetch registries, so the two ids never collide and one name covers both.
+#
+# NO API KEY IS SHIPPED HERE. Supply it one of three ways:
+#   a) the credentials service, under `apiKeyEnv` (default TINYFISH_API_KEY);
+#   b) the TINYFISH_API_KEY environment variable of the launching process;
+#   c) a literal `apiKey` in a private override of these rows, e.g. in the
+#      profile's own cordis.patch.yml (which is not published):
+#
+#        - id: web-search-tinyfish
+#          config:
+#            apiKey: 'sk-tinyfish-...'
+#
+# Every value below is also the plugin's Config default, so a private override
+# only needs to add `apiKey`; the rest falls back to these defaults.
+- insert:
+    - id: web-search-tinyfish
+      name: 'dsh-web-tinyfish'
+      config:
+        apiKeyEnv: TINYFISH_API_KEY
+        baseURL: 'https://api.search.tinyfish.ai'
+        domainType: web
+        # Optional filters (uncomment to narrow results):
+        # location: HK
+        # language: zh
+        # purpose: 'Find authoritative sources for the current task.'
+        # recencyMinutes: 1440
+    - id: web-fetch-tinyfish
+      name: 'dsh-web-tinyfish/fetch'
+      config:
+        apiKeyEnv: TINYFISH_API_KEY
+        baseURL: 'https://api.fetch.tinyfish.ai'
+        # markdown -> the seam's text body, so no HTML->markdown pass is needed.
+        format: markdown
+        # 0 = always fetch live, matching the local HTTP provider's always-fresh
+        # behaviour. Raise it to accept cached copies.
+        ttl: 0
+        maxBodyChars: 100000
+        # purpose: 'Read the full page to answer the current task.'
+        # perUrlTimeoutMs: 45000
+- id: web
+  name: '@deepseek-ai/dsh-web'
+  config:
+    searchProvider: tinyfish
+    fetchProvider: tinyfish
