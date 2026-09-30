@@ -85,15 +85,31 @@ regardless of account-level or package-level 2FA settings":
 
 Keep the token's expiry short and revoke it after the release: it can publish packages directly.
 
-### The publish is live even when npm says 404
+### Propagation is staged — a fresh 404 is not a failed release
 
-Immediately after a successful publish, `npm view` and `pnpm add` returned **404** — local negative
-caching, not a failed release. Confirm against the registry directly:
+A successful `npm publish` does not become visible everywhere at once. Observed order for 1.0.1:
+
+1. `npm publish` prints `+ name@version` and, for a new version,
+   `Your package is being processed and may take a few minutes to become available.`
+2. The **registry packument** (`https://registry.npmjs.org/<name>`) updates first: the new version
+   appears in `versions` and `dist-tags`.
+3. The **tarball** becomes downloadable roughly three minutes later. Until then, even the exact
+   `dist.tarball` URL from the packument returns 404 — so "the version is in dist-tags" is *not*
+   proof the artifact is retrievable.
+4. `www.npmjs.com/package/<name>` lags further behind a CDN. A cached render can still show the
+   previous version and the previous README; request `?v=<version>` to bypass it.
+5. npm and pnpm may additionally serve a **local negative cache** of the earlier 404.
+
+Verify against the registry and the artifact, never against the website:
 
 ```powershell
-& "C:\Users\wangy\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe" -e `
-  "fetch('https://registry.npmjs.org/dsh-web-tinyfish').then(r=>console.log(r.status)).then(()=>process.exit())"
+# poll the packument, then the real dist.tarball, until the artifact downloads
+& "C:\Users\wangy\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe" `
+  "C:\workspace\tinyfish-dsh\verify\wait-and-fetch-tarball.mjs" dsh-web-tinyfish 1.0.1 out.tgz
 ```
+
+Take the tarball URL from `versions[<version>].dist.tarball` rather than constructing it. Compare the
+extracted files against the source with SHA256; that is what proves the release matches HEAD.
 
 Note also that pnpm's supply-chain gate logs
 `Added 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml` for a brand-new release, because the
