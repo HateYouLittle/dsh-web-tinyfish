@@ -41,12 +41,19 @@ servers rather than locally. Point `fetchProvider` back at `http` for anything s
 Requires DSH and a TinyFish API key (create one at https://agent.tinyfish.ai/api-keys).
 
 ```sh
-dsh plugin add dsh-web-tinyfish
+dsh plugin --profile <profile> add dsh-web-tinyfish
 ```
 
-Or, in the Web UI: **Plugins → Add plugin**, enter `dsh-web-tinyfish`, then **Enable now**.
-Installing the bundle applies its patch layer, which registers both providers and pins
-`web.searchProvider` / `web.fetchProvider` to `tinyfish`.
+The profile must already exist — this CLI boots the profile before running the command. For the
+Desktop-managed `desktop` profile the CLI refuses to act, so use the Web UI: **Plugins → Add plugin**,
+enter `dsh-web-tinyfish`, then **Enable now**. Installing the bundle applies its patch layer, which
+registers both providers and pins `web.searchProvider` / `web.fetchProvider` to `tinyfish`.
+
+> **Supply the key before or with the install.** The bundle pins both settings, so in a profile with no
+> key (`TINYFISH_API_KEY` credential, environment variable, or private config override) the providers
+> report unavailable and both `web_search` and `web_fetch` fail with
+> `WEB_PROVIDER_CONFIGURED_UNAVAILABLE`. Reverting is one line: point `web.searchProvider` back at
+> `deepseek-official` and `web.fetchProvider` back at `http`.
 
 ### Supply the API key
 

@@ -33,11 +33,18 @@ metadata 端点，所以本地 provider 提供的 SSRF 防护依然在，只是�
 需要 DSH 和一枚 TinyFish API key（在 https://agent.tinyfish.ai/api-keys 创建）。
 
 ```sh
-dsh plugin add dsh-web-tinyfish
+dsh plugin --profile <profile> add dsh-web-tinyfish
 ```
 
-或在 Web 界面：**Plugins → Add plugin**，填 `dsh-web-tinyfish`，然后 **Enable now**。安装即应用该
-bundle 的 patch 层，它会注册两个 provider 并把 `web.searchProvider` / `web.fetchProvider` pin 到 `tinyfish`。
+profile **必须已存在** —— 这个 CLI 会先 boot profile 再执行命令。Desktop 托管的 `desktop` profile
+CLI 会拒绝操作，请改用 Web 界面：**Plugins → Add plugin**，填 `dsh-web-tinyfish`，然后 **Enable now**。
+安装即应用该 bundle 的 patch 层，它会注册两个 provider 并把 `web.searchProvider` / `web.fetchProvider`
+pin 到 `tinyfish`。
+
+> **请在安装前或安装时就把 key 配好。** 因为 bundle 会 pin 这两个设置，若某个 profile 里没有 key
+> （`TINYFISH_API_KEY` 凭据、环境变量或私有配置覆盖），两个 provider 都会报不可用，`web_search` 与
+> `web_fetch` 会以 `WEB_PROVIDER_CONFIGURED_UNAVAILABLE` 失败。回退只需一行：把 `web.searchProvider`
+> 改回 `deepseek-official`、`web.fetchProvider` 改回 `http`。
 
 ### 提供 API key
 
