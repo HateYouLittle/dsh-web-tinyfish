@@ -1,6 +1,6 @@
 {
   "name": "dsh-web-tinyfish",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TinyFish search and fetch providers for DeepSeek Harness (dsh), backing the built-in web_search and web_fetch tools.",
   "type": "module",
   "main": "index.js",
